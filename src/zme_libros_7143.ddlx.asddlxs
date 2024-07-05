@@ -1,0 +1,131 @@
+@Metadata.layer: #CORE
+
+//********************************************************************************
+// PANTALLA1 - CABECERA
+//********************************************************************************
+@UI.headerInfo:{
+                 typeName       : 'Libro',  //TOTAL DE REGISTROS SINGULAR
+                 typeNamePlural : 'Libros', //TOTAL DE REGISTROS PLURAL
+//********************************************************************************
+// PANTALLA2 - CABECERA SE MUESTRA AL SELECCIONAR UN REGISTRO DE LA PANTALLA1 Inicio
+//********************************************************************************
+                 title:       { type  : #STANDARD,
+                                value : 'Titulo'},
+                 description: { type  : #STANDARD,
+                                value : 'Autor'},
+                 imageUrl             : 'Imagen' }
+
+// PANTALLA2 - CABECERA2 SE MUESTRA AL SELECCIONAR UN REGISTRO DE LA PANTALLA1 Fin
+
+@Search.searchable: true //ACTIVA EL USO DE BUSQUEDAS PARA LAS COLUMNAS DEF CON @Search.defaultSearchElement
+
+annotate view ZC_LIBROS_7143 with
+{
+  //********************************************************************************
+  //@UI: FACET - DEFINE PESTAÑAS EN PANTALLA_2 AL SELECCIONAR REGISTRO DE PANTALLA_1
+  //********************************************************************************
+  @UI:{ facet  : [ { id              : 'PestanasUno', //DEFINE LINEA DE PESTAÑAS
+                     label           : 'Detalles del libro',
+                     type            : #COLLECTION, //COLLECTION es una tabla
+                     position        : 10},
+
+                                                     //PESTAÑA1 'Detalles libro'
+                   { id              : 'Libro',
+                     label           : 'Detalles libro',
+                     type            : #FIELDGROUP_REFERENCE, //Trae registros marcados con 'PestanasUno': IdLibro, BiCateg, Precio
+                     targetQualifier : 'PestanasUno',
+                     position        : 20 },
+
+                                                    //PESTAÑA2 'Compradores'
+                   { id              : 'Compradores',
+                     label           : 'Compradores',
+                     type            : #LINEITEM_REFERENCE, //Trea linea de asociation _Clientes
+                     targetElement   : '_Clientes', //Asociation
+                     position        : 30 }]}
+
+
+  //********************************************************************************
+  // CONFIGURA LAS COLUMNAS A MOSTRAR EN PANTALLA 1
+  //********************************************************************************
+  //     Lo muestra en PANTALLA 1  
+  @UI: { lineItem  : [{ position       : 10,
+                        importance     : #HIGH}],
+
+  //     Lo muestra en PANTALLA 2 PESTAÑA1 'Detalles libro', asociado al type #FIELDGROUP_REFERENCE de 'PestanasUno'
+         fieldGroup: [{ qualifier      : 'PestanasUno',
+                        position       : 10}],
+                        selectionField : [{ position: 10 }]} //CAMPO DE BUSQEUDA 1
+  IdLibro;
+
+  //  ------------------------------------------------------------------
+  //     Lo muestra en PANTALLA 1
+  @UI: { lineItem:  [{ position       : 20,
+                       importance     : #HIGH}],
+                       selectionField : [{ position: 20 }]} //CAMPO DE BUSQEUDA 2
+  Titulo;
+
+  //  ------------------------------------------------------------------
+  @Search.defaultSearchElement : true //DEFINE ESTE COMO CAMPO DE BUSQUEDA
+  @Search.fuzzinessThreshold   : 0.8
+  @Search.ranking              : #HIGH
+  
+//     Lo muestra en PANTALLA 1
+  @UI : { lineItem: [{ position       : 30,
+                       importance     : #HIGH}],
+                       selectionField : [{ position: 30 }]} //CAMPO DE BUSQEUDA 3
+  Editorial;
+
+  //  ------------------------------------------------------------------
+  //Muestra Autor en Tabla PANTALLA1
+  @UI:  { lineItem: [{ position       : 40,
+                       importance     : #HIGH}],
+                       selectionField : [{ position: 40 }]} //CAMPO DE BUSQEUDA 4
+  Autor;
+
+  //  ------------------------------------------------------------------
+
+  @Consumption.valueHelpDefinition: [{ entity: { name: 'ZC_CATEGORIAS_7143', element: 'BiCateg'} }] //COMO ES CAMPO DE BUSQUEDA selectionField,
+                                                                                                    //TRAE AYUDA DE LA CDS ZC_CATEGORIAS_7143
+  @UI:  { lineItem: [{ position       : 50,
+                       importance     : #HIGH }],
+
+  //    Lo muestra en PANTALLA 2 PESTAÑA1 'Detalles libro', asociado al type #FIELDGROUP_REFERENCE de 'PestanasUno'
+        fieldGroup: [{ qualifier      : 'PestanasUno',
+                       position       : 20}],
+                       selectionField : [{ position   : 50 }]} //CAMPO DE BUSQEUDA 5
+  BiCateg;
+
+  //  ------------------------------------------------------------------
+  //Muestra Formato en Tabla PANTALLA1
+  @UI:  { lineItem:[{ position       : 60,
+                     importance      : #MEDIUM}]}
+  Formato;
+
+  //  ------------------------------------------------------------------
+  //Muestra Paginas en Tabla PANTALLA1
+  @UI:  { lineItem: [{ position      : 70,
+                       importance    : #MEDIUM}]}
+  Paginas;
+
+  //  ------------------------------------------------------------------
+  //Muestra Precio en Tabla PANTALLA1
+  @UI:  { lineItem: [{ position       : 80,
+                       importance     : #HIGH }],
+                       
+  //    Lo muestra en PANTALLA2 PESTAÑA1 'Detalle Libro', asociado al type #FIELDGROUP_REFERENCE de 'PestanasUno'
+        fieldGroup: [{ qualifier      : 'PestanasUno', 
+                       position       : 30,
+                       importance     : #LOW }]}
+  Precio;
+
+  //  ------------------------------------------------------------------
+  //Muestra Ventas en Tabla PANTALLA1
+  @UI:{ lineItem: [{ position     : 90,
+                  importance      : #HIGH,
+                  criticality     : 'Ventas', //CRITICIDAD CON CAMPO "VENTAS"
+                  value           : 'Ventas',
+                  label           : 'Status' }]}
+  Ventas;
+  //  ------------------------------------------------------------------
+  //@UI: LineItem - DEFINE COLUMNAS DE LA TABLA Y SU ORDEN EN PANTALLA1 - Fin
+}

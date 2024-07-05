@@ -1,0 +1,69 @@
+@Metadata.layer: #CORE
+
+//********************************************************************************
+// PANTALLA2 - CABECERA
+//********************************************************************************
+@UI.headerInfo : { typeName       : 'Libro',
+                   typeNamePlural : 'Libros',
+
+//********************************************************************************
+// PANTALLA3 - CABECERA QUE SE MUESTRA AL SELECCIONAR UN REGISTRO DE LA PANTALLA2
+//********************************************************************************
+                   title          : { type : #STANDARD,
+                                      value: 'NombreCompleto' },
+                   description    : { type : #STANDARD,
+                                      value: 'IDCliente' },
+                   imageUrl       : 'Imagen' }
+// PANTALLA2 - CABECERA2 SE MUESTRA AL SELECCIONAR UN REGISTRO DE LA PANTALLA1 Fin
+
+annotate view zc_clientes_7143 with
+{
+  //********************************************************************************
+  //@UI: FACET - DEFINE PESTAÑA1 EN PANTALLA_3 AL SELECCIONAR REGISTRO DE PANTALLA_2 PESTAÑA2 "Compradores"
+  //********************************************************************************
+  @UI:{ facet: [ { id       : 'DetallesCliente',  //DEFINE LINEA DE PESTAÑAS
+                   label    : 'Cliente',
+                   type     : #COLLECTION, //COLLECTION es una tabla
+                   position : 10},
+                   
+  //             PESTAÑA1 EN PANTALLA3 'Cliente'
+                 { id       : 'Cliente',
+                   parentId : 'DetallesCliente',
+                   label    : 'Detalles',
+                   type     : #FIELDGROUP_REFERENCE, //Trae un registro con los campos marcados con qualifier: 'DetallesCliente' - IdCliente, Acceso, Email
+                   targetQualifier: 'DetallesCliente',
+                   position : 10 }]}
+
+  //********************************************************************************
+  // CONFIGURA LAS COLUMNAS A MOSTRAR EN PANTALLA 3
+  //********************************************************************************
+  //     Lo muestra en PANTALLA 3
+  @UI: { lineItem:   [{ position   : 10,
+                        importance : #HIGH}],
+                        
+  //     Lo muestra en PANTALLA 3 PESTAÑA1 'Cliente', asociado al type #FIELDGROUP_REFERENCE de 'DetallesCliente'
+  //     al seleccionar un registro de la PANTALLA 2
+         fieldGroup: [{ qualifier  : 'DetallesCliente',
+                        position   : 10 }]}
+  IdCliente;
+  //  ------------------------------------------------------------------
+//     Lo muestra en PANTALLA 3
+  @UI: { lineItem:   [{ position: 20,
+                        importance: #HIGH}],
+                        
+  //     Lo muestra en PANTALLA 3 PESTAÑA1 'Cliente', asociado al type #FIELDGROUP_REFERENCE de 'DetallesCliente'
+  //     al seleccionar un registro de la PANTALLA 2
+         fieldGroup: [{ qualifier: 'DetallesCliente',
+                        position: 20 }]}
+  Acceso;
+  //  ------------------------------------------------------------------
+//     Lo muestra en PANTALLA 3
+  @UI: { lineItem:  [{ position: 30,
+                       importance: #HIGH}],
+                       
+  //     Lo muestra en PANTALLA 3 PESTAÑA1 'Cliente', asociado al type #FIELDGROUP_REFERENCE de 'DetallesCliente'
+  //     al seleccionar un registro de la PANTALLA 2
+         fieldGroup: [{ qualifier: 'DetallesCliente',
+                        position: 30 }]}
+  Email;
+}
