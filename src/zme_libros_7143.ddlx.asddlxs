@@ -6,15 +6,15 @@
 @UI.headerInfo:{
                  typeName       : 'Libro',  //TOTAL DE REGISTROS SINGULAR
                  typeNamePlural : 'Libros', //TOTAL DE REGISTROS PLURAL
+
 //********************************************************************************
-// PANTALLA2 - CABECERA SE MUESTRA AL SELECCIONAR UN REGISTRO DE LA PANTALLA1 Inicio
+// PANTALLA2 - CABECERA QUE SE MUESTRA AL SELECCIONAR UN REGISTRO DE LA PANTALLA1 Inicio
 //********************************************************************************
                  title:       { type  : #STANDARD,
                                 value : 'Titulo'},
                  description: { type  : #STANDARD,
                                 value : 'Autor'},
                  imageUrl             : 'Imagen' }
-
 // PANTALLA2 - CABECERA2 SE MUESTRA AL SELECCIONAR UN REGISTRO DE LA PANTALLA1 Fin
 
 @Search.searchable: true //ACTIVA EL USO DE BUSQUEDAS PARA LAS COLUMNAS DEF CON @Search.defaultSearchElement
@@ -29,17 +29,17 @@ annotate view ZC_LIBROS_7143 with
                      type            : #COLLECTION, //COLLECTION es una tabla
                      position        : 10},
 
-                                                     //PESTAÑA1 'Detalles libro'
+                   //PESTAÑA1 'Detalles libro'
                    { id              : 'Libro',
                      label           : 'Detalles libro',
-                     type            : #FIELDGROUP_REFERENCE, //Trae registros marcados con 'PestanasUno': IdLibro, BiCateg, Precio
+                     type            : #FIELDGROUP_REFERENCE, //Trae un registro con los campos marcados con qualifier: 'PestanasUno' - IdLibro, BiCateg, Precio
                      targetQualifier : 'PestanasUno',
                      position        : 20 },
 
-                                                    //PESTAÑA2 'Compradores'
+                   //PESTAÑA2 'Compradores'
                    { id              : 'Compradores',
                      label           : 'Compradores',
-                     type            : #LINEITEM_REFERENCE, //Trea linea de asociation _Clientes
+                     type            : #LINEITEM_REFERENCE, //Trea linea de asociation con la Metadata ZC_CLIENTES_7143 as _Clientes
                      targetElement   : '_Clientes', //Asociation
                      position        : 30 }]}
 
@@ -47,14 +47,15 @@ annotate view ZC_LIBROS_7143 with
   //********************************************************************************
   // CONFIGURA LAS COLUMNAS A MOSTRAR EN PANTALLA 1
   //********************************************************************************
-  //     Lo muestra en PANTALLA 1  
+  //     Lo muestra en PANTALLA 1
   @UI: { lineItem  : [{ position       : 10,
                         importance     : #HIGH}],
+                        selectionField : [{ position: 10 }], //CAMPO DE BUSQEUDA 1
 
   //     Lo muestra en PANTALLA 2 PESTAÑA1 'Detalles libro', asociado al type #FIELDGROUP_REFERENCE de 'PestanasUno'
+  //     al seleccionar un registro de la PANTALLA 1
          fieldGroup: [{ qualifier      : 'PestanasUno',
-                        position       : 10}],
-                        selectionField : [{ position: 10 }]} //CAMPO DE BUSQEUDA 1
+                        position       : 10}]}
   IdLibro;
 
   //  ------------------------------------------------------------------
@@ -68,31 +69,35 @@ annotate view ZC_LIBROS_7143 with
   @Search.defaultSearchElement : true //DEFINE ESTE COMO CAMPO DE BUSQUEDA
   @Search.fuzzinessThreshold   : 0.8
   @Search.ranking              : #HIGH
-  
-//     Lo muestra en PANTALLA 1
+
+  //     Lo muestra en PANTALLA 1
   @UI : { lineItem: [{ position       : 30,
                        importance     : #HIGH}],
                        selectionField : [{ position: 30 }]} //CAMPO DE BUSQEUDA 3
   Editorial;
 
   //  ------------------------------------------------------------------
-  //Muestra Autor en Tabla PANTALLA1
+  //     Lo muestra en PANTALLA 1
   @UI:  { lineItem: [{ position       : 40,
                        importance     : #HIGH}],
                        selectionField : [{ position: 40 }]} //CAMPO DE BUSQEUDA 4
   Autor;
 
   //  ------------------------------------------------------------------
+  //Como esta definido CAMPO BUSQUEDA selectionField, trae datos de la CDS ZC_CATEGORIAS_7143
+  @Consumption.valueHelpDefinition: [{ entity: { name: 'ZC_CATEGORIAS_7143', element: 'BiCateg'} }]
 
-  @Consumption.valueHelpDefinition: [{ entity: { name: 'ZC_CATEGORIAS_7143', element: 'BiCateg'} }] //COMO ES CAMPO DE BUSQUEDA selectionField,
-                                                                                                    //TRAE AYUDA DE LA CDS ZC_CATEGORIAS_7143
+
+  //     Lo muestra en PANTALLA 1
   @UI:  { lineItem: [{ position       : 50,
                        importance     : #HIGH }],
+                       selectionField: [{ position: 50 }],  //CAMPO DE BUSQEUDA 5
 
   //    Lo muestra en PANTALLA 2 PESTAÑA1 'Detalles libro', asociado al type #FIELDGROUP_REFERENCE de 'PestanasUno'
+  //     al seleccionar un registro de la PANTALLA 1
         fieldGroup: [{ qualifier      : 'PestanasUno',
-                       position       : 20}],
-                       selectionField : [{ position   : 50 }]} //CAMPO DE BUSQEUDA 5
+                       position       : 20}]}
+
   BiCateg;
 
   //  ------------------------------------------------------------------
@@ -111,9 +116,10 @@ annotate view ZC_LIBROS_7143 with
   //Muestra Precio en Tabla PANTALLA1
   @UI:  { lineItem: [{ position       : 80,
                        importance     : #HIGH }],
-                       
+
   //    Lo muestra en PANTALLA2 PESTAÑA1 'Detalle Libro', asociado al type #FIELDGROUP_REFERENCE de 'PestanasUno'
-        fieldGroup: [{ qualifier      : 'PestanasUno', 
+  //     al seleccionar un registro de la PANTALLA 1
+        fieldGroup: [{ qualifier      : 'PestanasUno',
                        position       : 30,
                        importance     : #LOW }]}
   Precio;
@@ -122,10 +128,9 @@ annotate view ZC_LIBROS_7143 with
   //Muestra Ventas en Tabla PANTALLA1
   @UI:{ lineItem: [{ position     : 90,
                   importance      : #HIGH,
-                  criticality     : 'Ventas', //CRITICIDAD CON CAMPO "VENTAS"
+                  criticality     : 'Ventas', //CRITICIDAD CON CAMPO "VENTAS" Muestra LOGO segun valor de Ventas
                   value           : 'Ventas',
                   label           : 'Status' }]}
   Ventas;
   //  ------------------------------------------------------------------
-  //@UI: LineItem - DEFINE COLUMNAS DE LA TABLA Y SU ORDEN EN PANTALLA1 - Fin
 }
